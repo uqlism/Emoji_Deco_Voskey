@@ -111,3 +111,10 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Generated output
+output/
+output.zip
+
+# Claude
+.claude/
