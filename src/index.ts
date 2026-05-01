@@ -4,6 +4,7 @@ import { createZip } from './zip.ts';
 
 const VOSKY_BASE = process.env.VOSKY_URL ?? 'https://voskey.icalo.net';
 const OUT_DIR = process.env.OUT_DIR ?? './output';
+const OUT_ZIP = process.env.OUT_ZIP ?? 'emoji_deco_voskey_1.20.1.zip';
 const CONCURRENCY = Number(process.env.CONCURRENCY ?? 20);
 
 async function processEmoji(emoji: MisskeyEmoji): Promise<void> {
@@ -66,7 +67,7 @@ async function main(): Promise<void> {
 
   console.log(`\nDone: ${done} ok, ${failed} failed`);
 
-  const zipPath = `${OUT_DIR}.zip`;
+  const zipPath = OUT_ZIP;
   console.log(`\nCreating ${zipPath} …`);
   const zipSize = await createZip(OUT_DIR, zipPath);
   const mb = (zipSize / 1024 / 1024).toFixed(2);
