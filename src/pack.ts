@@ -19,7 +19,7 @@ const DISPLAY_COMMON = (urlNode: object) => ({
   type: 'emoji_deco:style',
   color: '#ffffff',
   contents: {
-    type: 'emoji_deco:hover',
+    type: 'emoji_deco:hover/text',
     hover_contents: { type: 'emoji_deco:arg', index: 0 },
     contents: [
       {
