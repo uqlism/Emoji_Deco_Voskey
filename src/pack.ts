@@ -15,38 +15,72 @@ export async function createDirectories(outDir: string): Promise<void> {
   await mkdir(path.join(outDir, 'assets', 'emoji_deco', 'shortcodes'), { recursive: true });
 }
 
-const VO_TEMPLATE = {
-  enable: true,
-  args: [
-    { value_type: 'string', default: '', label: '<code>' },
-    { value_type: 'string', default: '', label: '<url>' },
-    { value_type: 'string', default: '', label: '<format>' },
-    { value_type: 'number', default: 8, label: '<width>' },
-  ],
-  display: {
-    text: '',
-    hoverText: {
-      action: 'show_text',
-      contents: { type: 'emoji_deco:arg', index: 0 },
+const VO_TEMPLATE ={
+  "enable": true,
+  "args": [
+    {
+      "value_type": "string",
+      "default": "",
+      "label": "<code>"
     },
-    color: '#ffffff',
-    extra: [
+    {
+      "value_type": "string",
+      "default": "",
+      "label": "<path>"
+    },
+    {
+      "value_type": "string",
+      "default": "",
+      "label": "<format>"
+    },
+    {
+      "value_type": "number",
+      "default": 8,
+      "label": "<width>"
+    }
+  ],
+  "display": {
+    "text": "",
+    "hoverEvent": {
+      "action": "show_text",
+      "contents": {
+        "type": "emoji_deco:arg",
+        "index": 0
+      }
+    },
+    "color": "#ffffff",
+    "extra": [
       {
-        type: 'emoji_deco:image_to_glyph',
-        width: { type: 'emoji_deco:arg', index: 3 },
-        height: 8,
-        image: {
-          type: 'emoji_deco:decode_image',
-          format: { type: 'emoji_deco:arg', index: 2 },
-          source: {
-            type: 'emoji_deco:fetch_url',
-            url: { type: 'emoji_deco:arg', index: 1 },
-          },
+        "type": "emoji_deco:image_to_glyph",
+        "width": {
+          "type": "emoji_deco:arg",
+          "index": 3
         },
-      },
-    ],
-  },
-};
+        "height": 8,
+        "image": {
+          "type": "emoji_deco:decode_image",
+          "format": {
+            "type": "emoji_deco:arg",
+            "index": 2
+          },
+          "source": {
+            "type": "emoji_deco:fetch_url",
+            "url": {
+              "type": "emoji_deco:join",
+              "parts": [
+                "https://voskeyfiles.icalo.net/drv/",
+                {
+                  "type": "emoji_deco:arg",
+                  "index": 1
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}
 
 export async function writePackMeta(outDir: string): Promise<void> {
   await writeFile(
@@ -63,7 +97,7 @@ export async function writeShortcode(
   outDir: string,
   name: string,
   aliases: string[],
-  imageUrl: string,
+  imagePath: string,
   format: string,
   width: number,
 ): Promise<void> {
@@ -73,7 +107,7 @@ export async function writeShortcode(
     display: {
       type: 'emoji_deco:apply_shortcode',
       shortcode: 'vo_template',
-      args: [name, imageUrl, format, width],
+      args: [name, imagePath, format, width],
     },
   };
   const dest = path.join(outDir, 'assets', 'emoji_deco', 'shortcodes', `${name}.json`);
