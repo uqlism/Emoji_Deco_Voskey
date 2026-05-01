@@ -43,7 +43,7 @@ const ARGS_COMMON = (pathLabel: string) => [
   { value_type: 'number', default: 8, label: '<width>' },
 ];
 
-const VO_TEMPLATE = {
+const VO_DRV = {
   enable: true,
   args: ARGS_COMMON('<path>'),
   display: DISPLAY_COMMON({
@@ -52,10 +52,13 @@ const VO_TEMPLATE = {
   }),
 };
 
-const VO_TEMPLATE_URL = {
+const VO_FILES = {
   enable: true,
-  args: ARGS_COMMON('<url>'),
-  display: DISPLAY_COMMON({ type: 'emoji_deco:arg', index: 1 }),
+  args: ARGS_COMMON('<id>'),
+  display: DISPLAY_COMMON({
+    type: 'emoji_deco:join',
+    parts: ['https://voskey.icalo.net/files/', { type: 'emoji_deco:arg', index: 1 }],
+  }),
 };
 
 export async function writePackMeta(outDir: string): Promise<void> {
@@ -65,8 +68,8 @@ export async function writePackMeta(outDir: string): Promise<void> {
       path.join(outDir, 'pack.mcmeta'),
       JSON.stringify({ pack: { pack_format: 15, description: 'Vosky Emoji Pack' } }, null, 2),
     ),
-    writeFile(path.join(sc, 'vo_template.json'), JSON.stringify(VO_TEMPLATE, null, 2)),
-    writeFile(path.join(sc, 'vo_template_url.json'), JSON.stringify(VO_TEMPLATE_URL, null, 2)),
+    writeFile(path.join(sc, 'vo_drv.json'), JSON.stringify(VO_DRV, null, 2)),
+    writeFile(path.join(sc, 'vo_files.json'), JSON.stringify(VO_FILES, null, 2)),
   ]);
 }
 
@@ -77,7 +80,7 @@ export async function writeShortcode(
   imageArg: string,
   format: string,
   width: number,
-  template: 'vo_template' | 'vo_template_url' = 'vo_template',
+  template: 'vo_drv' | 'vo_files' = 'vo_drv',
 ): Promise<void> {
   const shortcode = {
     enable: true,

@@ -7,14 +7,15 @@ const OUT_DIR = process.env.OUT_DIR ?? './output';
 const OUT_ZIP = process.env.OUT_ZIP ?? 'emoji_deco_voskey_1.20.1.zip';
 const CONCURRENCY = Number(process.env.CONCURRENCY ?? 50);
 const DRV_BASE = 'https://voskeyfiles.icalo.net/drv/';
+const FILES_BASE = 'https://voskey.icalo.net/files/';
 
 async function processEmoji(emoji: MisskeyEmoji): Promise<void> {
   const name = sanitizeName(emoji.name);
   const { width: imgW, height: imgH, format } = await fetchImageSize(emoji.url);
   const width = calcWidth(imgW, imgH);
-  const isCdn = emoji.url.startsWith(DRV_BASE);
-  const imageArg = isCdn ? emoji.url.slice(DRV_BASE.length) : emoji.url;
-  const template = isCdn ? 'vo_template' : 'vo_template_url';
+  const template = emoji.url.startsWith(DRV_BASE) ? 'vo_drv' : 'vo_files';
+  const base = template === 'vo_drv' ? DRV_BASE : FILES_BASE;
+  const imageArg = emoji.url.slice(base.length);
   await writeShortcode(OUT_DIR, name, emoji.aliases, imageArg, format, width, template);
 }
 
