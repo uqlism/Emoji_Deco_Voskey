@@ -25,11 +25,10 @@ const DISPLAY_COMMON = (urlNode: object) => ({
   extra: [
     {
       type: 'emoji_deco:image_to_glyph',
-      width: { type: 'emoji_deco:arg', index: 3 },
+      width: { type: 'emoji_deco:arg', index: 2 },
       height: 8,
       image: {
         type: 'emoji_deco:decode_image',
-        format: { type: 'emoji_deco:arg', index: 2 },
         source: { type: 'emoji_deco:fetch_url', url: urlNode },
       },
     },
@@ -39,7 +38,6 @@ const DISPLAY_COMMON = (urlNode: object) => ({
 const ARGS_COMMON = (pathLabel: string) => [
   { value_type: 'string', default: '', label: '<code>' },
   { value_type: 'string', default: '', label: pathLabel },
-  { value_type: 'string', default: '', label: '<format>' },
   { value_type: 'number', default: 8, label: '<width>' },
 ];
 
@@ -78,15 +76,16 @@ export async function writeShortcode(
   name: string,
   aliases: string[],
   imageArg: string,
-  format: string,
   width: number,
   template: 'vo_drv' | 'vo_files' = 'vo_drv',
 ): Promise<void> {
+  const args: (string | number)[] = [name, imageArg];
+  if (width !== 8) args.push(width);
   const shortcode: Record<string, unknown> = {
     display: {
       type: 'emoji_deco:apply_shortcode',
       shortcode: template,
-      args: [name, imageArg, format, width],
+      args,
     },
   };
   if (aliases.length > 0) shortcode.aliases = aliases;

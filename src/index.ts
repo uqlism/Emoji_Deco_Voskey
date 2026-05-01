@@ -11,7 +11,7 @@ const FILES_BASE = 'https://voskey.icalo.net/files/';
 
 async function processEmoji(emoji: MisskeyEmoji): Promise<void> {
   const name = sanitizeName(emoji.name);
-  const { width: imgW, height: imgH, format } = await fetchImageSize(emoji.url);
+  const { width: imgW, height: imgH } = await fetchImageSize(emoji.url);
   const width = calcWidth(imgW, imgH);
   let template: 'vo_drv' | 'vo_files';
   let base: string;
@@ -23,7 +23,7 @@ async function processEmoji(emoji: MisskeyEmoji): Promise<void> {
     throw new Error(`Unsupported URL (no matching template): ${emoji.url}`);
   }
   const imageArg = emoji.url.slice(base.length);
-  await writeShortcode(OUT_DIR, name, emoji.aliases, imageArg, format, width, template);
+  await writeShortcode(OUT_DIR, name, emoji.aliases, imageArg, width, template);
 }
 
 async function runPool<T>(
