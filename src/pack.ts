@@ -82,15 +82,14 @@ export async function writeShortcode(
   width: number,
   template: 'vo_drv' | 'vo_files' = 'vo_drv',
 ): Promise<void> {
-  const shortcode = {
-    enable: true,
-    aliases,
+  const shortcode: Record<string, unknown> = {
     display: {
       type: 'emoji_deco:apply_shortcode',
       shortcode: template,
       args: [name, imageArg, format, width],
     },
   };
+  if (aliases.length > 0) shortcode.aliases = aliases;
   const dest = path.join(outDir, 'assets', 'emoji_deco', 'shortcodes', `${name}.json`);
   await writeFile(dest, JSON.stringify(shortcode));
 }
