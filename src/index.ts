@@ -5,15 +5,17 @@ import { createZip } from './zip.ts';
 const VOSKY_BASE = process.env.VOSKY_URL ?? 'https://voskey.icalo.net';
 const OUT_DIR = process.env.OUT_DIR ?? './output';
 const OUT_ZIP = process.env.OUT_ZIP ?? 'emoji_deco_voskey_1.20.1.zip';
-const CONCURRENCY = Number(process.env.CONCURRENCY ?? 20);
+const CONCURRENCY = Number(process.env.CONCURRENCY ?? 50);
 const DRV_BASE = 'https://voskeyfiles.icalo.net/drv/';
 
 async function processEmoji(emoji: MisskeyEmoji): Promise<void> {
   const name = sanitizeName(emoji.name);
   const { width: imgW, height: imgH, format } = await fetchImageSize(emoji.url);
   const width = calcWidth(imgW, imgH);
-  const imagePath = emoji.url.startsWith(DRV_BASE) ? emoji.url.slice(DRV_BASE.length) : emoji.url;
-  await writeShortcode(OUT_DIR, name, emoji.aliases, imagePath, format, width);
+  const isCdn = emoji.url.startsWith(DRV_BASE);
+  const imageArg = isCdn ? emoji.url.slice(DRV_BASE.length) : emoji.url;
+  const template = isCdn ? 'vo_template' : 'vo_template_url';
+  await writeShortcode(OUT_DIR, name, emoji.aliases, imageArg, format, width, template);
 }
 
 async function runPool<T>(
