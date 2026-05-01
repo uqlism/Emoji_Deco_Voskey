@@ -16,23 +16,23 @@ export async function createDirectories(outDir: string): Promise<void> {
 }
 
 const DISPLAY_COMMON = (urlNode: object) => ({
-  text: '',
-  hoverEvent: {
-    action: 'show_text',
-    contents: { type: 'emoji_deco:arg', index: 0 },
-  },
+  type: 'emoji_deco:style',
   color: '#ffffff',
-  extra: [
-    {
-      type: 'emoji_deco:image_to_glyph',
-      width: { type: 'emoji_deco:arg', index: 2 },
-      height: 8,
-      image: {
-        type: 'emoji_deco:decode_image',
-        source: { type: 'emoji_deco:fetch_url', url: urlNode },
+  contents: {
+    type: 'emoji_deco:hover',
+    hover_contents: { type: 'emoji_deco:arg', index: 0 },
+    contents: [
+      {
+        type: 'emoji_deco:image_to_glyph',
+        width: { type: 'emoji_deco:arg', index: 2 },
+        height: 8,
+        image: {
+          type: 'emoji_deco:decode_image',
+          source: { type: 'emoji_deco:fetch_url', url: urlNode },
+        },
       },
-    },
-  ],
+    ],
+  },
 });
 
 const ARGS_COMMON = (pathLabel: string) => [
