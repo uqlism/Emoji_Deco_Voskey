@@ -13,8 +13,15 @@ async function processEmoji(emoji: MisskeyEmoji): Promise<void> {
   const name = sanitizeName(emoji.name);
   const { width: imgW, height: imgH, format } = await fetchImageSize(emoji.url);
   const width = calcWidth(imgW, imgH);
-  const template = emoji.url.startsWith(DRV_BASE) ? 'vo_drv' : 'vo_files';
-  const base = template === 'vo_drv' ? DRV_BASE : FILES_BASE;
+  let template: 'vo_drv' | 'vo_files';
+  let base: string;
+  if (emoji.url.startsWith(DRV_BASE)) {
+    template = 'vo_drv'; base = DRV_BASE;
+  } else if (emoji.url.startsWith(FILES_BASE)) {
+    template = 'vo_files'; base = FILES_BASE;
+  } else {
+    throw new Error(`Unsupported URL (no matching template): ${emoji.url}`);
+  }
   const imageArg = emoji.url.slice(base.length);
   await writeShortcode(OUT_DIR, name, emoji.aliases, imageArg, format, width, template);
 }
