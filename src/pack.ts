@@ -6,23 +6,6 @@ export function sanitizeName(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9_.\-]/g, '_');
 }
 
-/** Derive the image format string from URL extension, with HEAD request fallback. */
-export async function formatFromUrl(url: string): Promise<string> {
-  const ext = url.split('?')[0].split('.').pop()?.toLowerCase() ?? '';
-  if (ext === 'gif' || ext === 'png' || ext === 'webp') return ext;
-
-  try {
-    const res = await fetch(url, { method: 'HEAD' });
-    const ct = res.headers.get('content-type') ?? '';
-    if (ct.includes('webp')) return 'webp';
-    if (ct.includes('gif')) return 'gif';
-    if (ct.includes('png')) return 'png';
-  } catch (err) {
-    throw new Error(`Failed to HEAD ${url}: ${err}`);
-  }
-  throw new Error(`Unknown image format for URL: ${url}`);
-}
-
 /** Calculate shortcode width from image aspect ratio (height fixed at 8). */
 export function calcWidth(imgWidth: number, imgHeight: number): number {
   return Math.max(1, Math.round((imgWidth / imgHeight) * 8));
@@ -81,6 +64,7 @@ export async function writeShortcode(
   name: string,
   aliases: string[],
   imageUrl: string,
+  format: string,
   width: number,
 ): Promise<void> {
   const shortcode = {
@@ -89,7 +73,7 @@ export async function writeShortcode(
     display: {
       type: 'emoji_deco:apply_shortcode',
       shortcode: 'vo_template',
-      args: [name, imageUrl, await formatFromUrl(imageUrl), width],
+      args: [name, imageUrl, format, width],
     },
   };
   const dest = path.join(outDir, 'assets', 'emoji_deco', 'shortcodes', `${name}.json`);

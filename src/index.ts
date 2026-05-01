@@ -8,9 +8,9 @@ const CONCURRENCY = Number(process.env.CONCURRENCY ?? 20);
 
 async function processEmoji(emoji: MisskeyEmoji): Promise<void> {
   const name = sanitizeName(emoji.name);
-  const { width: imgW, height: imgH } = await fetchImageSize(emoji.url);
+  const { width: imgW, height: imgH, format } = await fetchImageSize(emoji.url);
   const width = calcWidth(imgW, imgH);
-  await writeShortcode(OUT_DIR, name, emoji.aliases, emoji.url, width);
+  await writeShortcode(OUT_DIR, name, emoji.aliases, emoji.url, format, width);
 }
 
 async function runPool<T>(
