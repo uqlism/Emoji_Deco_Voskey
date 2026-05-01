@@ -20,7 +20,26 @@ const DISPLAY_COMMON = (urlNode: object) => ({
   color: '#ffffff',
   contents: {
     type: 'emoji_deco:hover/text',
-    hover_contents: { type: 'emoji_deco:arg', index: 0 },
+    hover_contents: [
+      {
+        type: 'emoji_deco:scale',
+        x: 4,
+        y: 4,
+        contents: {
+          type: 'emoji_deco:image_to_glyph',
+          width: { type: 'emoji_deco:arg', index: 2 },
+          height: 8,
+          image: {
+            type: 'emoji_deco:decode_image',
+            source: { type: 'emoji_deco:fetch_url', disk_cache: true, url: urlNode },
+          },
+        },
+      },
+      {
+        type: 'emoji_deco:join',
+        parts: [':', { type: 'emoji_deco:arg', index: 0 }, ':'],
+      },
+    ],
     contents: [
       {
         type: 'emoji_deco:image_to_glyph',
@@ -28,7 +47,7 @@ const DISPLAY_COMMON = (urlNode: object) => ({
         height: 8,
         image: {
           type: 'emoji_deco:decode_image',
-          source: { type: 'emoji_deco:fetch_url', url: urlNode },
+          source: { type: 'emoji_deco:fetch_url', disk_cache: true, url: urlNode },
         },
       },
     ],
