@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
+import sharp from 'sharp';
 
 /** Sanitise an emoji name to a valid Minecraft resource path segment [a-z0-9_.-]. */
 export function sanitizeName(name: string): string {
@@ -77,6 +78,13 @@ const VO_FILES = {
     parts: ['https://voskey.icalo.net/files/', { type: 'emoji_deco:arg', index: 1 }],
   }),
 };
+
+export async function writePackIcon(outDir: string, imageUrl: string): Promise<void> {
+  const res = await fetch(imageUrl);
+  const buf = Buffer.from(await res.arrayBuffer());
+  const png = await sharp(buf, { pages: 1 }).resize(128, 128).png().toBuffer();
+  await writeFile(path.join(outDir, 'pack.png'), png);
+}
 
 export async function writePackMeta(outDir: string): Promise<void> {
   const sc = path.join(outDir, 'assets', 'emoji_deco', 'shortcodes');

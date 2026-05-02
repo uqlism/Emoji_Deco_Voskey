@@ -1,5 +1,5 @@
 import { fetchEmojiList, fetchImageSize, type MisskeyEmoji } from './api.ts';
-import { sanitizeName, createDirectories, writePackMeta, writeShortcode, calcWidth } from './pack.ts';
+import { sanitizeName, createDirectories, writePackMeta, writePackIcon, writeShortcode, calcWidth } from './pack.ts';
 import { createZip } from './zip.ts';
 
 const VOSKY_BASE = process.env.VOSKY_URL ?? 'https://voskey.icalo.net';
@@ -8,6 +8,7 @@ const OUT_ZIP = process.env.OUT_ZIP ?? 'emoji_deco_voskey_1.20.1.zip';
 const CONCURRENCY = Number(process.env.CONCURRENCY ?? 50);
 const DRV_BASE = 'https://voskeyfiles.icalo.net/drv/';
 const FILES_BASE = 'https://voskey.icalo.net/files/';
+const ICON_EMOJI = 'eyes_fidgeting_rei';
 
 async function processEmoji(emoji: MisskeyEmoji): Promise<void> {
   const name = sanitizeName(emoji.name);
@@ -58,6 +59,14 @@ async function main(): Promise<void> {
   console.log('Fetching emoji list…');
   const emojis = await fetchEmojiList(VOSKY_BASE);
   console.log(`Found ${emojis.length} emojis\n`);
+
+  const iconEmoji = emojis.find(e => e.name === ICON_EMOJI);
+  if (iconEmoji) {
+    await writePackIcon(OUT_DIR, iconEmoji.url);
+    console.log(`Pack icon: ${ICON_EMOJI}\n`);
+  } else {
+    console.warn(`Pack icon emoji not found: ${ICON_EMOJI}\n`);
+  }
 
   let done = 0;
   let failed = 0;
