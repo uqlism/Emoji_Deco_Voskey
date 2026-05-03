@@ -28,6 +28,6 @@ jobs:
             --title "Latest Build" \
             --notes "Vosky 絵文字パック - 毎日自動更新" \
             2>/dev/null || true
-          gh release upload latest emoji_deco_voskey_1.20.1.zip --clobber
+          gh release upload latest emoji_deco_voskey_1.20.1-0.3.0.zip --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
