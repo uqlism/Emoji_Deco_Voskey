@@ -70,6 +70,38 @@ const VO_DRV = {
   }),
 };
 
+const VOSKEY_LTL = {
+  enable: true,
+  args: [{ value_type: 'integer', label: '<index>', default: 0 }],
+  display: {
+    type: 'emoji_deco:string/parse',
+    text: {
+      type: 'emoji_deco:string/replace',
+      from: '\n',
+      to: ' ',
+      text: {
+        type: 'emoji_deco:json_get',
+        keys: [{ type: 'emoji_deco:arg', index: 0 }, 'text'],
+        value: {
+          type: 'emoji_deco:parse_json',
+          text: {
+            type: 'emoji_deco:decode_str',
+            encoding: 'utf-8',
+            source: {
+              type: 'emoji_deco:fetch_url',
+              url: 'https://voskey.icalo.net/api/notes/local-timeline',
+              method: 'POST',
+              ttl: 5,
+              headers: { 'Content-Type': 'application/json' },
+              body: '{}',
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 const VO_FILES = {
   enable: true,
   args: ARGS_COMMON('<id>'),
@@ -95,6 +127,7 @@ export async function writePackMeta(outDir: string): Promise<void> {
     ),
     writeFile(path.join(sc, 'vo_drv.json'), JSON.stringify(VO_DRV, null, 2)),
     writeFile(path.join(sc, 'vo_files.json'), JSON.stringify(VO_FILES, null, 2)),
+    writeFile(path.join(sc, 'voskey_ltl.json'), JSON.stringify(VOSKEY_LTL, null, 2)),
   ]);
 }
 
