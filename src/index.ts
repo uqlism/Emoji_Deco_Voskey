@@ -1,5 +1,5 @@
 import { fetchEmojiList, fetchImageSize, type MisskeyEmoji } from './api.ts';
-import { sanitizeName, createDirectories, writePackMeta, writePackIcon, writeShortcode, calcWidth } from './pack.ts';
+import { sanitizeName, createDirectories, writePackMeta, writePackIcon, writeShortcode, writeUrlAllowlist, calcWidth } from './pack.ts';
 import { createZip } from './zip.ts';
 
 const VOSKY_BASE = process.env.VOSKY_URL ?? 'https://voskey.icalo.net';
@@ -70,6 +70,7 @@ async function main(): Promise<void> {
 
   let done = 0;
   let failed = 0;
+  const domains = new Set<string>();
 
   await runPool(
     emojis,
@@ -81,12 +82,16 @@ async function main(): Promise<void> {
         console.error(`  FAIL  ${emoji.name}: ${err}`);
       } else {
         done++;
+        domains.add(new URL(emoji.url).hostname);
         process.stdout.write(`  OK  ${emoji.name}\n`);
       }
     },
   );
 
   console.log(`\nDone: ${done} ok, ${failed} failed`);
+
+  await writeUrlAllowlist(OUT_DIR, [...domains]);
+  console.log(`url_allowlist.json: ${[...domains].sort().join(', ')}`);
 
   const zipPath = OUT_ZIP;
   console.log(`\nCreating ${zipPath} …`);

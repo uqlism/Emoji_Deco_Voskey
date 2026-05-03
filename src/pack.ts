@@ -98,6 +98,13 @@ export async function writePackMeta(outDir: string): Promise<void> {
   ]);
 }
 
+export async function writeUrlAllowlist(outDir: string, domains: string[]): Promise<void> {
+  await writeFile(
+    path.join(outDir, 'assets', 'emoji_deco', 'url_allowlist.json'),
+    JSON.stringify({ allowed_domains: [...domains].sort() }, null, 2),
+  );
+}
+
 export async function writeShortcode(
   outDir: string,
   name: string,
